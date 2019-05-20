@@ -205,6 +205,9 @@ export default {
             loading.close();
           } else {
             loading.close();
+            this.$toast.error("问卷没有找到");
+            this.$router.replace({ path: "/list"});
+            
           }
         })
         .catch(failResponse => {
