@@ -1,0 +1,34 @@
+{
+  "name": "wj",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "core-js": "^2.6.5",
+    "echarts": "^4.2.1",
+    "good-storage": "^1.1.0",
+    "muse-ui": "^3.0.2",
+    "muse-ui-loading": "^0.2.0",
+    "muse-ui-message": "^0.2.1",
+    "muse-ui-progress": "^0.1.0",
+    "muse-ui-toast": "^0.3.0",
+    "vue": "^2.6.10",
+    "vue-clipboard2": "^0.3.0",
+    "vue-print-nb": "^1.0.3",
+    "vue-qriously": "^1.1.1",
+    "vue-router": "^3.0.3",
+    "vue-wechat-title": "^2.0.5",
+    "vuex": "^3.1.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.6.0",
+    "@vue/cli-service": "^3.6.0",
+    "node-sass": "^4.9.0",
+    "sass-loader": "^7.1.0",
+    "vue-template-compiler": "^2.5.21"
+  }
+}
