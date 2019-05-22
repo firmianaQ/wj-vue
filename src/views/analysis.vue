@@ -7,6 +7,14 @@
           <div class="wj_header">
             <span class="wj_title">{{wj.wjTitle}}</span>
             <span class="wj_recycle">(id:{{wj.wjId}} 回收数量:{{recycle}})</span>
+            <mu-tooltip content="导出数据">
+              <mu-button large icon @click="downloadWord" v-if="wordLoading">
+                <mu-icon size="30" value="screen_share" ></mu-icon>
+              </mu-button>
+            </mu-tooltip>
+            <mu-tooltip content="正在导出"  v-if="!wordLoading">
+              <mu-circular-progress></mu-circular-progress>
+            </mu-tooltip>
           </div>
           <div v-for="(qs, index) in wj.wjtms" :key="index">
             <div>
@@ -26,11 +34,11 @@
                   </template>
                 </mu-data-table>
                 <div class="wj_charts">
-                <MyEcharts
-                  :id="'exampleId'+qs.wjtmId"
-                  :style="{width: '100%', height: '300%'}"
-                  :option="chartOption.filter(function(item){ return item.chartId == qs.wjtmId })[0].option"
-                ></MyEcharts>
+                  <MyEcharts
+                    :id="'exampleId'+qs.wjtmId"
+                    :style="{width: '100%', height: '300%'}"
+                    :option="chartOption.filter(function(item){ return item.chartId == qs.wjtmId })[0].option"
+                  ></MyEcharts>
                 </div>
               </div>
               <div v-else-if="qs.wjtmType=='多选'">
@@ -48,11 +56,11 @@
                   </template>
                 </mu-data-table>
                 <div class="wj_charts">
-                <MyEcharts
-                  :id="'exampleId'+qs.wjtmId"
-                  :style="{width: '100%', height: '380px'}"
-                  :option="chartOption.filter(function(item){ return item.chartId == qs.wjtmId })[0].option"
-                ></MyEcharts>
+                  <MyEcharts
+                    :id="'exampleId'+qs.wjtmId"
+                    :style="{width: '100%', height: '380px'}"
+                    :option="chartOption.filter(function(item){ return item.chartId == qs.wjtmId })[0].option"
+                  ></MyEcharts>
                 </div>
               </div>
               <div v-else>
@@ -109,7 +117,7 @@
 .wj_tmContent {
   margin-bottom: 1%;
 }
-.wj_charts{
+.wj_charts {
   margin: 1rem 0;
 }
 </style>
@@ -128,6 +136,8 @@ export default {
   },
   data() {
     return {
+      wordLoading:true,
+      datas: {},
       wjId: this.$route.params.wjId + "",
       chartOption: [],
       echartsXYcolor: "#fff000",
@@ -144,12 +154,12 @@ export default {
         {
           title: "小计",
           name: "value",
-          align: "center" 
+          align: "center"
         },
         {
           title: "百分比(%)",
           name: "to",
-          align: "center" 
+          align: "center"
         }
       ],
       columns2: [
@@ -157,7 +167,7 @@ export default {
         {
           title: "文本答案",
           name: "value",
-          align: "center" 
+          align: "center"
         }
       ]
     };
@@ -166,7 +176,29 @@ export default {
     this.getData(this.wjId);
   },
   methods: {
-    print() {},
+    downloadWord() {
+      this.wordLoading = !this.wordLoading;
+      this.$axios({
+        method: "get",
+        url: "/analysis/word/" + this.wjId, // 请求地址
+        responseType: "blob"
+      })
+        .then(res => {
+          //定义文件名等相关信息
+          const blob = res.data;
+          const url = window.URL.createObjectURL(new Blob([res.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", this.wj.wjTitle + "-数据分析.doc");
+          document.body.appendChild(link);
+          link.click();
+          this.$toast.success("下载成功");
+          this.wordLoading = !this.wordLoading;
+        })
+        .catch(failResponse => {
+          alert("出现错误");
+        });
+    },
     handleSortChange({ name, order }) {
       this.list = this.list.sort((a, b) =>
         order === "asc" ? a[name] - b[name] : b[name] - a[name]
@@ -184,6 +216,7 @@ export default {
           let data = successResponse.data;
           let statusCode = data.meta.code;
           if (statusCode == 200) {
+            this.datas = data.data;
             this.wj = data.data.wj;
             this.recycle = data.data.recycle;
             this.wj.wjtms.forEach(element => {
@@ -206,8 +239,7 @@ export default {
           } else {
             loading.close();
             this.$toast.error("问卷没有找到");
-            this.$router.replace({ path: "/list"});
-            
+            this.$router.replace({ path: "/list" });
           }
         })
         .catch(failResponse => {
