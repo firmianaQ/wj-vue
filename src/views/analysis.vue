@@ -7,14 +7,13 @@
           <div class="wj_header">
             <span class="wj_title">{{wj.wjTitle}}</span>
             <span class="wj_recycle">(id:{{wj.wjId}} 回收数量:{{recycle}})</span>
-            <mu-tooltip content="导出数据">
-              <mu-button large icon @click="downloadWord" v-if="wordLoading">
-                <mu-icon size="30" value="screen_share" ></mu-icon>
+          
+              <mu-button large flat @click="downloadWord"  v-if="wordLoading">
+                <mu-icon size="30" value="screen_share" ></mu-icon>导出数据
               </mu-button>
-            </mu-tooltip>
-            <mu-tooltip content="正在导出"  v-if="!wordLoading">
-              <mu-circular-progress></mu-circular-progress>
-            </mu-tooltip>
+            <mu-button large flat @click="downloadWord"  v-if="!wordLoading">
+                <mu-circular-progress></mu-circular-progress>正在导出
+              </mu-button>
           </div>
           <div v-for="(qs, index) in wj.wjtms" :key="index">
             <div>
